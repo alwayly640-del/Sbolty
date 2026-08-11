@@ -558,34 +558,34 @@
         <button class="btn secondary" id="closeSheet">رجوع</button>
       </div>
 
-      <div id="masterStep" style="display:none">
+      <div id="paymentDetailsStep" style="display:none">
         <div class="row">
           <div>
-            <div style="font-weight:900">💳 الدفع عبر MasterCard</div>
-            <div class="muted" style="margin-top:4px">حوّل المبلغ المطلوب للحساب التالي</div>
+            <div style="font-weight:900" id="paymentTitle">💳 تفاصيل الدفع</div>
+            <div class="muted" style="margin-top:4px">حوّل المبلغ المطلوب، وبعدها دز صورة الإثبات للبوت.</div>
           </div>
-          <span class="badge">MasterCard</span>
+          <span class="badge" id="paymentBadge">Payment</span>
         </div>
 
         <div class="glass card" style="margin-top:13px;background:rgba(255,255,255,.05)">
-          <div class="muted">اسم المستلم</div>
-          <div style="font-size:18px;font-weight:900;margin-top:5px">علي عمار</div>
+          <div class="muted" id="recipientLabel">اسم المستلم</div>
+          <div style="font-size:18px;font-weight:900;margin-top:5px" id="recipientName">علي عمار</div>
 
-          <div class="muted" style="margin-top:13px">رقم الحساب</div>
+          <div class="muted" style="margin-top:13px">رقم التحويل / الحساب</div>
           <div class="row" style="margin-top:5px">
-            <div style="font-size:21px;font-weight:950;letter-spacing:1px" dir="ltr">7165627493</div>
-            <button type="button" id="copyMaster" class="pay" style="padding:9px 12px">📋 نسخ</button>
+            <div style="font-size:21px;font-weight:950;letter-spacing:1px" dir="ltr" id="paymentNumber">7165627493</div>
+            <button type="button" id="copyPayment" class="pay" style="padding:9px 12px">📋 نسخ</button>
           </div>
 
           <div class="muted" style="margin-top:13px">المبلغ المطلوب</div>
-          <div id="masterAmount" class="price" style="font-size:25px;margin-top:4px">$0</div>
+          <div id="paymentAmount" class="price" style="font-size:25px;margin-top:4px">$0</div>
         </div>
 
         <div class="notice" style="display:block">
-          ⚠️ بعد ما تكمل التحويل اضغط «تم الدفع». الطلب راح يبقى بانتظار تأكيد الأدمن قبل تسليم الكود.
+          📸 بعد التحويل اضغط الزر الجوه. راح ينثبت الطلب بالبـوت، وبعدها ارجع للمحادثة ودز <b>صورة إثبات الدفع</b>. الصورة تروح مباشرة ويا رقم الطلب للأدمن.
         </div>
 
-        <button class="btn" id="paidMaster">✅ تم الدفع</button>
+        <button class="btn" id="sendProof">📸 حولت — ثبت الطلب وخليني أدز الصورة</button>
         <button class="btn secondary" id="backMethods">رجوع لطرق الدفع</button>
       </div>
     </div>
@@ -683,18 +683,13 @@
           btn.type = 'button';
           btn.textContent = method === 'MasterCard' ? '💳 MasterCard' : '🟣 آسيا';
           btn.addEventListener('click', () => {
-            if (method === 'MasterCard') {
-              showMasterPayment();
-            } else {
-              // آسيا تبقى حسب إعدادات البوت الحالية
-              createOrder(method);
-            }
+            showPaymentDetails(method);
           });
           methodsWrap.appendChild(btn);
         });
 
         $('#methodStep').style.display = 'block';
-        $('#masterStep').style.display = 'none';
+        $('#paymentDetailsStep').style.display = 'none';
         sheet.classList.add('show');
         haptic('medium');
       }
@@ -702,38 +697,51 @@
       function closePayment(){
         sheet.classList.remove('show');
         $('#methodStep').style.display = 'block';
-        $('#masterStep').style.display = 'none';
+        $('#paymentDetailsStep').style.display = 'none';
+        selectedPaymentMethod = null;
       }
 
       function pendingAmount(){
         return state.pending === 'code' ? 15 : growthPrice(qty.value);
       }
 
-      function showMasterPayment(){
+      let selectedPaymentMethod = null;
+
+      function showPaymentDetails(method){
+        selectedPaymentMethod = method;
         $('#methodStep').style.display = 'none';
-        $('#masterStep').style.display = 'block';
+        $('#paymentDetailsStep').style.display = 'block';
+
+        const isMaster = method === 'MasterCard';
+        $('#paymentTitle').textContent = isMaster ? '💳 الدفع عبر MasterCard' : '🟣 الدفع عبر آسيا حوالة';
+        $('#paymentBadge').textContent = isMaster ? 'MasterCard' : 'Asia';
+        $('#recipientLabel').textContent = isMaster ? 'اسم المستلم' : 'طريقة التحويل';
+        $('#recipientName').textContent = isMaster ? 'علي عمار' : 'آسيا حوالة';
+        $('#paymentNumber').textContent = isMaster ? '7165627493' : '07783860117';
+
         const amount = pendingAmount();
-        $('#masterAmount').textContent = '$' + (Number.isInteger(amount) ? amount.toFixed(0) : amount.toFixed(2));
+        $('#paymentAmount').textContent = '$' + (Number.isInteger(amount) ? amount.toFixed(0) : amount.toFixed(2));
         haptic('medium');
       }
 
-      $('#copyMaster').addEventListener('click', async () => {
-        const account = '7165627493';
+      $('#copyPayment').addEventListener('click', async () => {
+        const account = $('#paymentNumber').textContent.trim();
         try {
           await navigator.clipboard.writeText(account);
-          showToast('تم نسخ رقم الحساب ✅');
+          showToast('تم نسخ رقم التحويل ✅');
         } catch (_) {
-          showToast('رقم الحساب: ' + account);
+          showToast('رقم التحويل: ' + account);
         }
       });
 
       $('#backMethods').addEventListener('click', () => {
-        $('#masterStep').style.display = 'none';
+        $('#paymentDetailsStep').style.display = 'none';
         $('#methodStep').style.display = 'block';
       });
 
-      $('#paidMaster').addEventListener('click', () => {
-        createOrder('MasterCard');
+      $('#sendProof').addEventListener('click', () => {
+        if (!selectedPaymentMethod) return;
+        createOrder(selectedPaymentMethod, true);
       });
 
       $('#closeSheet').addEventListener('click', closePayment);
@@ -753,7 +761,7 @@
 
       $('#codeBuy').addEventListener('click', () => openPayment('code'));
 
-      function createOrder(method){
+      function createOrder(method, returnToChat=false){
         let order;
         if (state.pending === 'growth') {
           const q = Number(qty.value);
@@ -782,7 +790,7 @@
         renderOrders();
         closePayment();
         showTab('orders');
-        showToast('تم إرسال طلبك وبانتظار تأكيد الدفع ✅');
+        showToast('تم تثبيت الطلب ✅ هسه دز صورة إثبات الدفع للبوت');
 
         // يرسل بيانات الطلب إلى البوت إذا تم فتح التطبيق من زر WebApp يدعم sendData.
         if (tg) {
@@ -791,7 +799,14 @@
               action: 'create_order',
               order
             }));
-          } catch (_) {}
+            if (returnToChat) {
+              setTimeout(() => { try { tg.close(); } catch (_) {} }, 550);
+            }
+          } catch (_) {
+            showToast('تعذر تثبيت الطلب. افتح التطبيق من داخل البوت وحاول مرة ثانية.');
+          }
+        } else {
+          showToast('افتح المتجر من داخل تيليگرام حتى ينثبت الطلب.');
         }
       }
 
