@@ -582,10 +582,18 @@
         </div>
 
         <div class="notice" style="display:block">
-          📸 بعد التحويل اضغط الزر الجوه. راح ينثبت الطلب بالبـوت، وبعدها ارجع للمحادثة ودز <b>صورة إثبات الدفع</b>. الصورة تروح مباشرة ويا رقم الطلب للأدمن.
+          ✅ بعد ما تحول اضغط «حولت». بعدها اختار <b>صورة إثبات التحويل</b> واضغط إرسال. الصورة تروح مباشرة للأدمن ويا رقم طلبك.
         </div>
 
-        <button class="btn" id="sendProof">📸 حولت — ثبت الطلب وخليني أدز الصورة</button>
+        <button class="btn" id="sendProof">✅ حولت — متابعة لإثبات الدفع</button>
+
+        <div id="proofStep" style="display:none;margin-top:12px">
+          <label for="proofFile">📸 صورة إثبات التحويل</label>
+          <input id="proofFile" type="file" accept="image/*" style="padding:11px">
+          <button class="btn" id="uploadProof">📤 إرسال الإثبات للأدمن</button>
+          <div class="muted" id="proofStatus" style="margin-top:9px;text-align:center"></div>
+        </div>
+
         <button class="btn secondary" id="backMethods">رجوع لطرق الدفع</button>
       </div>
     </div>
@@ -596,6 +604,7 @@
   <script>
     (() => {
       const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+      const BACKEND_URL = "https://blackstore.wispbyte.app";
       if (tg) {
         try {
           tg.ready();
@@ -607,7 +616,8 @@
 
       const state = {
         pending: null,
-        orders: []
+        orders: [],
+        serverOrder: null
       };
 
       const $ = (s) => document.querySelector(s);
@@ -739,9 +749,91 @@
         $('#methodStep').style.display = 'block';
       });
 
-      $('#sendProof').addEventListener('click', () => {
+      $('#sendProof').addEventListener('click', async () => {
         if (!selectedPaymentMethod) return;
-        createOrder(selectedPaymentMethod, true);
+
+        const btn = $('#sendProof');
+        btn.disabled = true;
+        btn.textContent = '⏳ جاري تثبيت الطلب...';
+
+        try {
+          const result = await createOrder(selectedPaymentMethod);
+          state.serverOrder = result;
+
+          $('#proofStep').style.display = 'block';
+          $('#proofStatus').textContent = `✅ تم تثبيت الطلب #${result.order_id}. اختار صورة التحويل هسه.`;
+
+          btn.textContent = `✅ الطلب #${result.order_id} مثبت`;
+          showToast(`تم تثبيت الطلب #${result.order_id} ✅`);
+          haptic('medium');
+        } catch (err) {
+          console.error(err);
+          btn.disabled = false;
+          btn.textContent = '✅ حولت — متابعة لإثبات الدفع';
+
+          const msg = String(err && err.message || '');
+          if (msg.includes('no_code_stock')) {
+            showToast('❌ حالياً ماكو أكواد متوفرة بالمخزون.');
+          } else if (msg.includes('invalid_telegram_data')) {
+            showToast('افتح المتجر من داخل تيليگرام وحاول مرة ثانية.');
+          } else {
+            showToast('تعذر تثبيت الطلب. حاول مرة ثانية.');
+          }
+        }
+      });
+
+      $('#uploadProof').addEventListener('click', async () => {
+        const file = $('#proofFile').files && $('#proofFile').files[0];
+
+        if (!state.serverOrder) {
+          showToast('ثبت الطلب أول شي.');
+          return;
+        }
+
+        if (!file) {
+          showToast('اختار صورة إثبات التحويل أول شي 📸');
+          return;
+        }
+
+        const btn = $('#uploadProof');
+        btn.disabled = true;
+        btn.textContent = '⏳ جاري إرسال الصورة...';
+        $('#proofStatus').textContent = 'جاري رفع الإثبات للأدمن...';
+
+        try {
+          const form = new FormData();
+          form.append('initData', tg ? tg.initData : '');
+          form.append('kind', state.serverOrder.kind);
+          form.append('order_id', String(state.serverOrder.order_id));
+          form.append('proof', file, file.name || 'proof.jpg');
+
+          const res = await fetch(BACKEND_URL + '/api/proof', {
+            method: 'POST',
+            body: form
+          });
+
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) throw new Error(data.error || 'proof_failed');
+
+          $('#proofStatus').textContent = '✅ وصل الإثبات للأدمن وتم تثبيت الحجز.';
+          btn.textContent = '✅ تم إرسال الإثبات';
+          showToast('وصلت صورة التحويل للأدمن ✅');
+
+          const current = state.orders.find(o => o.server_id === state.serverOrder.order_id);
+          if (current) current.status = 'الإثبات وصل للأدمن';
+          renderOrders();
+
+          setTimeout(() => {
+            closePayment();
+            showTab('orders');
+          }, 700);
+        } catch (err) {
+          console.error(err);
+          btn.disabled = false;
+          btn.textContent = '📤 إرسال الإثبات للأدمن';
+          $('#proofStatus').textContent = '❌ ما انرسل الإثبات. حاول مرة ثانية.';
+          showToast('تعذر إرسال الصورة. حاول مرة ثانية.');
+        }
       });
 
       $('#closeSheet').addEventListener('click', closePayment);
@@ -761,8 +853,9 @@
 
       $('#codeBuy').addEventListener('click', () => openPayment('code'));
 
-      function createOrder(method, returnToChat=false){
+      async function createOrder(method){
         let order;
+
         if (state.pending === 'growth') {
           const q = Number(qty.value);
           order = {
@@ -772,7 +865,7 @@
             target: $('#growthTarget').value.trim(),
             method,
             price: growthPrice(q),
-            status: 'بانتظار التأكيد'
+            status: 'بانتظار إثبات الدفع'
           };
         } else {
           order = {
@@ -782,32 +875,35 @@
             target: '',
             method,
             price: 15,
-            status: 'بانتظار التأكيد'
+            status: 'بانتظار إثبات الدفع'
           };
         }
 
+        if (!tg || !tg.initData) {
+          throw new Error('invalid_telegram_data');
+        }
+
+        const res = await fetch(BACKEND_URL + '/api/order', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            initData: tg.initData,
+            order
+          })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) {
+          throw new Error(data.error || 'order_failed');
+        }
+
+        order.server_id = data.order_id;
+        order.status = 'بانتظار إثبات الدفع';
+
         state.orders.unshift(order);
         renderOrders();
-        closePayment();
-        showTab('orders');
-        showToast('تم تثبيت الطلب ✅ هسه دز صورة إثبات الدفع للبوت');
 
-        // يرسل بيانات الطلب إلى البوت إذا تم فتح التطبيق من زر WebApp يدعم sendData.
-        if (tg) {
-          try {
-            tg.sendData(JSON.stringify({
-              action: 'create_order',
-              order
-            }));
-            if (returnToChat) {
-              setTimeout(() => { try { tg.close(); } catch (_) {} }, 550);
-            }
-          } catch (_) {
-            showToast('تعذر تثبيت الطلب. افتح التطبيق من داخل البوت وحاول مرة ثانية.');
-          }
-        } else {
-          showToast('افتح المتجر من داخل تيليگرام حتى ينثبت الطلب.');
-        }
+        return data;
       }
 
       function renderOrders(){
@@ -830,7 +926,7 @@
             </div>
             ${o.target ? `<div class="muted" style="margin-top:6px">🎯 ${escapeHtml(o.target)}</div>` : ''}
             <div class="muted" style="margin-top:6px">💳 ${o.method} &nbsp; • &nbsp; 💵 $${formatPrice(o.price)}</div>
-            <div class="muted" style="margin-top:6px">رقم مؤقت: #${String(state.orders.length - i).padStart(3,'0')}</div>
+            <div class="muted" style="margin-top:6px">${o.server_id ? `رقم الطلب: #${o.server_id}` : `رقم مؤقت: #${String(state.orders.length - i).padStart(3,'0')}`}</div>
           `;
           wrap.appendChild(el);
         });
