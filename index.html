@@ -1,166 +1,277 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#14091f" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0610">
   <title>BLACK STORE</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root{
-      --bg:#09060e;
-      --bg2:#160a24;
-      --card:rgba(255,255,255,.075);
-      --card2:rgba(255,255,255,.11);
-      --line:rgba(255,255,255,.10);
-      --text:#ffffff;
-      --muted:#cfc5da;
-      --p1:#b06cff;
-      --p2:#7c3aed;
-      --p3:#4c1d95;
-      --success:#35d07f;
-      --danger:#ff5f79;
+      --bg:#08050c;
+      --bg2:#11081b;
+      --panel:rgba(255,255,255,.065);
+      --panel-strong:rgba(255,255,255,.095);
+      --stroke:rgba(255,255,255,.10);
+      --text:#fff;
+      --muted:#cdbfda;
+      --p1:#c07cff;
+      --p2:#8b5cf6;
+      --p3:#6d28d9;
+      --p4:#3b176c;
+      --green:#35d082;
+      --red:#ff637a;
+      --yellow:#ffd166;
+      --shadow:0 18px 55px rgba(73,29,128,.27);
     }
     *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
     body{
       margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;
-      background:
-        radial-gradient(circle at 85% 5%, rgba(176,108,255,.25), transparent 30%),
-        radial-gradient(circle at 10% 85%, rgba(124,58,237,.18), transparent 28%),
-        linear-gradient(180deg,var(--bg2),var(--bg));
-      color:var(--text);
       min-height:100vh;
+      background:
+        radial-gradient(circle at 86% -5%, rgba(192,124,255,.20), transparent 31%),
+        radial-gradient(circle at 4% 82%, rgba(109,40,217,.18), transparent 29%),
+        linear-gradient(180deg,#140920 0%,#0c0712 45%,#07050a 100%);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;
       overflow-x:hidden;
     }
-    .app{max-width:760px;margin:0 auto;padding:18px 16px 110px;position:relative}
-    .orb{position:fixed;border-radius:999px;filter:blur(55px);opacity:.32;pointer-events:none;z-index:0}
-    .orb.one{width:170px;height:170px;background:#8b5cf6;top:-45px;left:-45px}
-    .orb.two{width:140px;height:140px;background:#c084fc;bottom:70px;right:-45px}
-    .hero,.section,.nav{position:relative;z-index:1}
-    .hero{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:28px;
-      padding:20px;
-      background:linear-gradient(135deg,rgba(108,34,180,.96),rgba(57,21,102,.96));
-      box-shadow:0 18px 50px rgba(69,18,120,.28);
-      overflow:hidden;
+    button,input,select{font:inherit}
+    button{-webkit-tap-highlight-color:transparent}
+    .app{position:relative;max-width:760px;margin:0 auto;padding:16px 14px 112px}
+    .ambient{position:fixed;border-radius:999px;filter:blur(62px);opacity:.32;pointer-events:none;z-index:0;animation:float 8s ease-in-out infinite}
+    .a1{width:180px;height:180px;top:-60px;left:-45px;background:#9d5cff}
+    .a2{width:150px;height:150px;bottom:65px;right:-48px;background:#6d28d9;animation-delay:-3s}
+    .a3{width:95px;height:95px;top:44%;left:36%;background:#c07cff;opacity:.11;animation-delay:-5s}
+    @keyframes float{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(0,18px,0) scale(1.08)}}
+    @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(192,124,255,.30)}70%{box-shadow:0 0 0 13px rgba(192,124,255,0)}100%{box-shadow:0 0 0 0 rgba(192,124,255,0)}}
+    @keyframes shimmer{0%{transform:translateX(-160%) rotate(18deg)}60%,100%{transform:translateX(410%) rotate(18deg)}}
+    .layer{position:relative;z-index:1}
+    .glass{
+      background:linear-gradient(180deg,rgba(255,255,255,.078),rgba(255,255,255,.045));
+      border:1px solid var(--stroke);
+      border-radius:24px;
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
     }
-    .hero:after{
+    .hero{
+      padding:18px;
+      border-radius:29px;
+      border:1px solid rgba(255,255,255,.12);
+      background:
+        radial-gradient(circle at 85% 0%,rgba(255,255,255,.15),transparent 31%),
+        linear-gradient(135deg,#8f49df 0%,#6423ad 48%,#34125d 100%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+      animation:rise .45s ease both;
+    }
+    .hero::after{
       content:"";
       position:absolute;
-      width:210px;height:210px;border-radius:50%;
-      background:rgba(255,255,255,.07);
-      left:-70px;bottom:-120px;
+      width:52px;height:250%;
+      top:-75%;left:-80px;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
+      animation:shimmer 6.5s linear infinite;
+      pointer-events:none;
     }
     .brand{display:flex;align-items:center;gap:14px;position:relative;z-index:2}
+    .logo-wrap{width:82px;height:82px;position:relative;flex:0 0 auto}
     .logo{
-      width:82px;height:82px;border-radius:24px;object-fit:cover;
-      border:1px solid rgba(255,255,255,.16);
-      box-shadow:0 0 28px rgba(196,139,255,.22);
+      width:82px;height:82px;border-radius:25px;object-fit:cover;
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:0 10px 30px rgba(32,8,54,.34);
+      animation:pulseRing 3.5s ease-out infinite;
     }
-    .title{font-size:24px;font-weight:800;margin:0 0 4px}
-    .subtitle{margin:0;color:#eee3fa;font-size:14px}
+    .verified{
+      position:absolute;left:-3px;bottom:-3px;width:24px;height:24px;border-radius:50%;
+      display:grid;place-items:center;background:#fff;color:#6d28d9;font-size:13px;font-weight:900;
+      border:3px solid #6423ad;
+    }
+    .brand-title{margin:0;font-size:24px;font-weight:900;letter-spacing:.3px}
+    .brand-sub{margin:4px 0 0;color:#f1e8fa;font-size:13px}
+    .hero-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
     .pill{
-      display:inline-flex;align-items:center;gap:6px;margin-top:12px;
-      background:rgba(255,255,255,.09);
+      padding:7px 10px;border-radius:999px;
+      background:rgba(255,255,255,.085);
       border:1px solid rgba(255,255,255,.12);
-      padding:7px 10px;border-radius:999px;font-size:12px;color:#f2eaff
+      color:#f7f0ff;font-size:12px
     }
-    .nav{
-      margin-top:14px;
-      display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
-      padding:8px;border:1px solid var(--line);border-radius:20px;
-      background:rgba(255,255,255,.045);backdrop-filter:blur(16px)
+    .welcome{margin-top:13px;font-size:13px;color:#eadcf7}
+    .quick{
+      margin-top:13px;
+      display:grid;grid-template-columns:repeat(3,1fr);gap:9px;
+      animation:rise .5s .05s ease both
+    }
+    .quick-card{padding:13px 10px;text-align:center}
+    .quick-value{font-size:18px;font-weight:900}
+    .quick-label{font-size:11px;color:var(--muted);margin-top:3px}
+    .top-tabs{
+      margin-top:13px;padding:7px;
+      display:grid;grid-template-columns:repeat(4,1fr);gap:7px
     }
     .tab{
-      border:0;border-radius:14px;padding:11px 8px;
-      background:transparent;color:#cdbddd;font-weight:700
+      border:0;border-radius:14px;padding:11px 5px;
+      color:#cdbdd9;background:transparent;font-weight:800;font-size:12px;
+      transition:.2s ease
     }
     .tab.active{
-      color:white;background:linear-gradient(135deg,var(--p1),var(--p2));
-      box-shadow:0 8px 20px rgba(124,58,237,.28)
-    }
-    .section{margin-top:14px;display:none;animation:fade .24s ease}
-    .section.active{display:block}
-    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .card{
-      background:var(--card);border:1px solid var(--line);border-radius:22px;
-      padding:16px;backdrop-filter:blur(16px)
-    }
-    .feature{cursor:pointer;transition:.2s ease}
-    .feature:active{transform:scale(.985)}
-    .icon{
-      width:48px;height:48px;border-radius:16px;display:grid;place-items:center;
+      color:#fff;
       background:linear-gradient(135deg,var(--p1),var(--p3));
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.15)
+      box-shadow:0 8px 20px rgba(109,40,217,.27)
     }
-    .h{font-size:17px;font-weight:800;margin:12px 0 4px}
-    .muted{color:var(--muted);font-size:13px}
+    .section{display:none;margin-top:13px;animation:rise .26s ease both}
+    .section.active{display:block}
+    .section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:3px 2px 10px}
+    .section-title h2{margin:0;font-size:17px}
+    .section-title span{font-size:12px;color:var(--muted)}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .service{
+      padding:15px;cursor:pointer;transition:.18s ease;position:relative;overflow:hidden
+    }
+    .service:active{transform:scale(.985)}
+    .service::before{
+      content:"";position:absolute;width:88px;height:88px;border-radius:50%;
+      background:radial-gradient(circle,rgba(176,108,255,.16),transparent 70%);
+      top:-34px;left:-28px
+    }
+    .icon{
+      width:46px;height:46px;border-radius:16px;display:grid;place-items:center;
+      background:linear-gradient(135deg,#b56dff,#5b1d9b);
+      border:1px solid rgba(255,255,255,.12);font-size:22px
+    }
+    .service h3{margin:12px 0 4px;font-size:15px}
+    .muted{color:var(--muted);font-size:12px}
+    .card{padding:16px}
     .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .price{font-size:27px;font-weight:900}
-    label{display:block;margin-top:12px;font-size:13px;color:var(--muted)}
+    .price{font-size:28px;font-weight:950}
+    .badge{
+      display:inline-flex;align-items:center;gap:5px;
+      border-radius:999px;padding:6px 9px;
+      background:rgba(192,124,255,.12);
+      border:1px solid rgba(192,124,255,.18);
+      color:#ead7ff;font-size:11px
+    }
+    .stock.ok{color:#9bf0c4}.stock.low{color:#ffd58b}
+    label{display:block;margin-top:13px;color:var(--muted);font-size:12px}
     select,input{
-      width:100%;margin-top:7px;border-radius:15px;border:1px solid var(--line);
-      background:rgba(255,255,255,.06);color:#fff;padding:13px 14px;font-size:16px;outline:none
+      width:100%;margin-top:7px;padding:13px 14px;border-radius:15px;
+      border:1px solid var(--stroke);background:rgba(255,255,255,.055);color:#fff;
+      outline:none;font-size:16px
     }
     select option{color:#111}
-    select:focus,input:focus{border-color:#b58cff;box-shadow:0 0 0 3px rgba(176,108,255,.13)}
+    select:focus,input:focus{border-color:#b88bff;box-shadow:0 0 0 3px rgba(176,108,255,.12)}
     .btn{
-      width:100%;border:0;border-radius:16px;padding:14px;margin-top:14px;
-      font-size:16px;font-weight:900;color:#fff;
-      background:linear-gradient(135deg,var(--p1),var(--p2));
-      box-shadow:0 12px 30px rgba(124,58,237,.28)
+      width:100%;border:0;border-radius:16px;padding:14px;
+      margin-top:14px;color:#fff;font-weight:900;font-size:15px;
+      background:linear-gradient(135deg,#b970ff,#7130d6);
+      box-shadow:0 12px 28px rgba(109,40,217,.25);
+      transition:.18s ease
     }
-    .btn.secondary{
-      background:rgba(255,255,255,.07);border:1px solid var(--line);box-shadow:none
-    }
-    .badge{
-      border-radius:999px;padding:6px 9px;background:rgba(176,108,255,.14);
-      border:1px solid rgba(205,165,255,.16);color:#e9d7ff;font-size:12px
-    }
-    .pay-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .btn:active{transform:scale(.985)}
+    .btn.secondary{background:rgba(255,255,255,.065);border:1px solid var(--stroke);box-shadow:none}
+    .pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
     .pay{
-      padding:13px;border-radius:15px;border:1px solid var(--line);
-      background:rgba(255,255,255,.07);color:#fff;font-weight:800
+      border:1px solid var(--stroke);border-radius:16px;padding:13px 8px;
+      background:rgba(255,255,255,.06);color:#fff;font-weight:850
     }
+    .order{padding:13px;margin-top:9px}
+    .order-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .status{font-size:11px;border-radius:999px;padding:5px 8px}
+    .waiting{color:#ffe4a8;background:rgba(255,209,102,.10);border:1px solid rgba(255,209,102,.16)}
+    .done{color:#aaf0ca;background:rgba(53,208,130,.10);border:1px solid rgba(53,208,130,.16)}
+    .empty{text-align:center;padding:27px 12px;color:var(--muted)}
+    .empty .emoji{font-size:34px;margin-bottom:7px}
     .notice{
-      margin-top:12px;padding:12px 14px;border-radius:16px;
-      background:rgba(176,108,255,.10);border:1px solid rgba(176,108,255,.20);
-      color:#eee3fa;font-size:13px
+      display:none;margin-top:12px;padding:12px 13px;border-radius:16px;
+      background:rgba(176,108,255,.10);border:1px solid rgba(176,108,255,.18);
+      color:#eadcf8;font-size:12px
     }
+    .toast{
+      position:fixed;z-index:30;left:50%;bottom:90px;transform:translate(-50%,16px);
+      width:min(520px,calc(100% - 30px));padding:12px 14px;border-radius:16px;
+      background:rgba(27,13,43,.96);border:1px solid var(--stroke);color:#fff;
+      opacity:0;pointer-events:none;transition:.25s ease;text-align:center;font-size:13px
+    }
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .sheet-backdrop{
+      display:none;position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.52);backdrop-filter:blur(4px)
+    }
+    .sheet-backdrop.show{display:block}
+    .sheet{
+      position:absolute;left:12px;right:12px;bottom:12px;
+      border-radius:25px;padding:16px;
+      background:#160d20;border:1px solid var(--stroke);
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
+      animation:rise .25s ease both
+    }
+    .handle{width:42px;height:4px;border-radius:10px;background:rgba(255,255,255,.18);margin:0 auto 12px}
     .bottom{
-      position:fixed;z-index:5;left:50%;transform:translateX(-50%);
-      bottom:12px;width:min(720px,calc(100% - 24px));
-      background:rgba(18,8,31,.88);backdrop-filter:blur(18px);
-      border:1px solid var(--line);border-radius:22px;
-      padding:9px;display:grid;grid-template-columns:repeat(4,1fr);gap:7px
+      position:fixed;z-index:10;left:50%;bottom:10px;transform:translateX(-50%);
+      width:min(730px,calc(100% - 20px));padding:8px;
+      display:grid;grid-template-columns:repeat(4,1fr);gap:6px;
+      background:rgba(14,8,21,.90);border:1px solid var(--stroke);
+      border-radius:22px;backdrop-filter:blur(18px)
     }
     .bottom button{
-      border:0;border-radius:14px;padding:10px 4px;background:transparent;color:#c8b7d6;font-size:12px
+      border:0;border-radius:14px;padding:9px 3px;background:transparent;
+      color:#c9b9d5;font-size:11px
     }
-    .bottom button.active{background:linear-gradient(135deg,#9d5cff,#6d28d9);color:#fff;font-weight:800}
-    @media(max-width:460px){.logo{width:68px;height:68px}.title{font-size:20px}.grid{grid-template-columns:1fr 1fr}}
+    .bottom button.active{
+      background:linear-gradient(135deg,#a95ef5,#6725ba);
+      color:#fff;font-weight:900
+    }
+    .bottom .nav-icon{display:block;font-size:18px;margin-bottom:2px}
+    @media(max-width:460px){
+      .logo-wrap,.logo{width:70px;height:70px}.logo{border-radius:22px}
+      .brand-title{font-size:21px}.quick{grid-template-columns:repeat(3,1fr)}
+      .quick-value{font-size:16px}.grid2{gap:9px}.card,.service{padding:14px}
+    }
   </style>
 </head>
 <body>
-  <div class="orb one"></div>
-  <div class="orb two"></div>
+  <div class="ambient a1"></div>
+  <div class="ambient a2"></div>
+  <div class="ambient a3"></div>
 
-  <main class="app">
+  <main class="app layer">
     <section class="hero">
       <div class="brand">
-        <img class="logo" src="blackstore-logo.jpeg" alt="BLACK STORE Logo">
-        <div>
-          <h1 class="title">BLACK STORE</h1>
-          <p class="subtitle">متجر الرشق وأكواد بلس</p>
-          <div class="pill">🟣 ثيم بنفسجي • ⚡ طلب سريع • 🎟 أكواد</div>
+        <div class="logo-wrap">
+          <img src="blackstore-logo.jpeg" class="logo" alt="BLACK STORE">
+          <span class="verified">✓</span>
         </div>
+        <div>
+          <h1 class="brand-title">BLACK STORE</h1>
+          <p class="brand-sub">متجر الرشق وأكواد بلس</p>
+          <div class="hero-pills">
+            <span class="pill">🟣 Premium</span>
+            <span class="pill">⚡ طلب سريع</span>
+            <span class="pill">🎟 أكواد</span>
+          </div>
+        </div>
+      </div>
+      <div class="welcome" id="welcome">هلا بيك 😎 اختار خدمتك والباقي علينا.</div>
+    </section>
+
+    <section class="quick">
+      <div class="glass quick-card">
+        <div class="quick-value">100K</div>
+        <div class="quick-label">أقصى كمية رشق</div>
+      </div>
+      <div class="glass quick-card">
+        <div class="quick-value">2</div>
+        <div class="quick-label">طرق دفع</div>
+      </div>
+      <div class="glass quick-card">
+        <div class="quick-value">24/7</div>
+        <div class="quick-label">واجهة المتجر</div>
       </div>
     </section>
 
-    <nav class="nav">
+    <nav class="glass top-tabs">
       <button class="tab active" data-tab="home">الرئيسية</button>
       <button class="tab" data-tab="growth">الرشق</button>
       <button class="tab" data-tab="codes">الأكواد</button>
@@ -168,201 +279,328 @@
     </nav>
 
     <section id="home" class="section active">
-      <div class="grid">
-        <div class="card feature" data-go="growth">
+      <div class="section-title">
+        <h2>شنو تحتاج اليوم؟</h2>
+        <span>اختار قسم</span>
+      </div>
+      <div class="grid2">
+        <article class="glass service" data-go="growth">
           <div class="icon">🚀</div>
-          <div class="h">خدمات الرشق</div>
+          <h3>خدمات الرشق</h3>
           <div class="muted">من 1,000 إلى 100,000</div>
-        </div>
-        <div class="card feature" data-go="codes">
+        </article>
+        <article class="glass service" data-go="codes">
           <div class="icon">🎟</div>
-          <div class="h">أكواد بلس</div>
+          <h3>أكواد بلس</h3>
           <div class="muted">تسليم بعد تأكيد الدفع</div>
+        </article>
+      </div>
+
+      <div class="glass card" style="margin-top:11px">
+        <div class="row">
+          <div>
+            <div style="font-weight:850">💳 طرق الدفع</div>
+            <div class="muted" style="margin-top:4px">الرشق: آسيا + MasterCard</div>
+          </div>
+          <span class="badge">الأكواد: MasterCard</span>
         </div>
       </div>
 
-      <div class="card" style="margin-top:12px">
+      <div class="glass card" style="margin-top:11px">
         <div class="row">
           <div>
-            <div class="h" style="margin:0">طرق الدفع</div>
-            <div class="muted" style="margin-top:4px">الرشق: آسيا + MasterCard</div>
+            <div style="font-weight:850">🔐 شراء آمن</div>
+            <div class="muted" style="margin-top:4px">لا ترسل PIN أو CVV داخل التطبيق</div>
           </div>
-          <span class="badge">الأكواد: MasterCard فقط</span>
+          <span class="badge">Privacy</span>
         </div>
       </div>
     </section>
 
     <section id="growth" class="section">
-      <div class="card">
+      <div class="section-title">
+        <h2>🚀 طلب رشق</h2>
+        <span>كل 5,000 = $10</span>
+      </div>
+      <div class="glass card">
         <div class="row">
           <div>
-            <div class="h" style="margin:0">🚀 طلب رشق جديد</div>
-            <div class="muted" style="margin-top:4px">كل 5,000 = $10</div>
+            <div style="font-weight:850">الكمية المختارة</div>
+            <div class="muted">اختار من القائمة</div>
           </div>
           <div class="price" id="growthPrice">$10</div>
         </div>
 
-        <label>الكمية</label>
+        <label for="growthQty">الكمية</label>
         <select id="growthQty"></select>
 
-        <label>الرابط أو اليوزر</label>
-        <input id="growthTarget" placeholder="@username أو رابط المنشور">
+        <label for="growthTarget">الرابط أو اليوزر</label>
+        <input id="growthTarget" placeholder="@username أو رابط المنشور" autocomplete="off">
 
         <button class="btn" id="growthBuy">متابعة للدفع 💳</button>
       </div>
     </section>
 
     <section id="codes" class="section">
-      <div class="card">
+      <div class="section-title">
+        <h2>🎟 أكواد بلس</h2>
+        <span>تسليم تلقائي بعد التأكيد</span>
+      </div>
+
+      <div class="glass card">
         <div class="row">
           <div>
-            <div class="h" style="margin:0">🎟 أكواد متجر بلس</div>
-            <div class="muted" style="margin-top:4px">السعر والمخزون راح يجي من البوت</div>
+            <div style="font-weight:900">كود متجر بلس</div>
+            <div class="muted" style="margin-top:4px">شرح التفعيل ينرسل ويا الكود</div>
           </div>
-          <span class="badge">⚡ تسليم تلقائي</span>
+          <span class="badge stock ok">● متوفر</span>
         </div>
 
-        <div class="card" style="margin-top:12px;background:rgba(255,255,255,.045)">
-          <div class="row">
-            <div>
-              <div class="h" style="margin:0">كود متجر بلس</div>
-              <div class="muted" style="margin-top:4px">بعد التأكيد يوصلك ويا شرح التفعيل</div>
-            </div>
-            <div class="price" style="font-size:22px">$15</div>
-          </div>
+        <div class="row" style="margin-top:16px">
+          <div class="muted">السعر</div>
+          <div class="price" style="font-size:25px">$15</div>
         </div>
 
-        <button class="btn" id="codeBuy">شراء الكود 😎</button>
+        <button class="btn" id="codeBuy">شراء الكود الآن 😎</button>
+      </div>
+
+      <div class="notice" id="codeNotice">
+        📖 بعد تأكيد الدفع: ينرسل الكود + شرح التفعيل + رابط الموقع تلقائياً.
       </div>
     </section>
 
     <section id="orders" class="section">
-      <div class="card">
-        <div class="h" style="margin:0">📦 طلباتك</div>
-        <div id="ordersList" class="muted" style="margin-top:10px">ماكو طلبات بالنموذج هسه.</div>
+      <div class="section-title">
+        <h2>📦 طلباتي</h2>
+        <span id="orderCount">0 طلب</span>
       </div>
-    </section>
-
-    <section id="paymentBox" class="section">
-      <div class="card">
-        <div class="row">
-          <div class="h" style="margin:0">💳 اختار طريقة الدفع</div>
-          <span class="badge">سريع</span>
+      <div id="ordersList">
+        <div class="glass empty">
+          <div class="emoji">📭</div>
+          بعد ماكو طلبات بهالجلسة.
         </div>
-        <div id="paymentButtons" class="pay-row"></div>
-        <button class="btn secondary" id="cancelPay">رجوع</button>
       </div>
     </section>
-
-    <div id="notice" class="notice" style="display:none"></div>
   </main>
 
-  <div class="bottom">
-    <button class="active" data-tab="home">🏠<br>الرئيسية</button>
-    <button data-tab="growth">🚀<br>الرشق</button>
-    <button data-tab="codes">🎟<br>الأكواد</button>
-    <button data-tab="orders">📦<br>طلباتي</button>
+  <nav class="bottom">
+    <button class="active" data-tab="home"><span class="nav-icon">🏠</span>الرئيسية</button>
+    <button data-tab="growth"><span class="nav-icon">🚀</span>الرشق</button>
+    <button data-tab="codes"><span class="nav-icon">🎟</span>الأكواد</button>
+    <button data-tab="orders"><span class="nav-icon">📦</span>طلباتي</button>
+  </nav>
+
+  <div class="sheet-backdrop" id="paymentSheet">
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="row">
+        <div>
+          <div style="font-weight:900">اختار طريقة الدفع</div>
+          <div class="muted" style="margin-top:3px" id="paymentSummary"></div>
+        </div>
+        <span class="badge">💳 Payment</span>
+      </div>
+      <div class="pay-grid" id="payMethods"></div>
+      <button class="btn secondary" id="closeSheet">رجوع</button>
+    </div>
   </div>
 
+  <div class="toast" id="toast" aria-live="polite"></div>
+
   <script>
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.ready();
-      tg.expand();
-      try { tg.setHeaderColor('#14091f'); tg.setBackgroundColor('#09060e'); } catch(e){}
-    }
+    (() => {
+      const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+      if (tg) {
+        try {
+          tg.ready();
+          tg.expand();
+          tg.setHeaderColor('#140920');
+          tg.setBackgroundColor('#08050c');
+        } catch (_) {}
+      }
 
-    const sections = [...document.querySelectorAll('.section')];
-    const tabs = [...document.querySelectorAll('[data-tab]')];
-    const notice = document.getElementById('notice');
-    const paymentBox = document.getElementById('paymentBox');
-    let pendingType = null;
+      const state = {
+        pending: null,
+        orders: []
+      };
 
-    function showTab(id){
-      sections.forEach(s => s.classList.toggle('active', s.id === id));
-      tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === id));
-      notice.style.display = 'none';
-      window.scrollTo({top:0,behavior:'smooth'});
-    }
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => [...document.querySelectorAll(s)];
+      const toast = $('#toast');
 
-    tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
-    document.querySelectorAll('[data-go]').forEach(el =>
-      el.addEventListener('click', () => showTab(el.dataset.go))
-    );
+      function haptic(type='light'){
+        try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(type); } catch (_) {}
+      }
 
-    const qty = document.getElementById('growthQty');
-    const values = [1000, ...Array.from({length:20},(_,i)=>(i+1)*5000)];
-    values.forEach(v => {
-      const o = document.createElement('option');
-      o.value = v;
-      o.textContent = v.toLocaleString('en-US');
-      qty.appendChild(o);
-    });
-    qty.value = '5000';
+      function showToast(message){
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => toast.classList.remove('show'), 2300);
+      }
 
-    const getPrice = v => (Number(v) / 5000) * 10;
-    function updatePrice(){
-      const p = getPrice(qty.value);
-      document.getElementById('growthPrice').textContent = '$' + p.toFixed(p % 1 ? 2 : 0);
-    }
-    qty.addEventListener('change', updatePrice);
-    updatePrice();
+      function showTab(id){
+        $$('.section').forEach(s => s.classList.toggle('active', s.id === id));
+        $$('[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+        window.scrollTo({top:0, behavior:'smooth'});
+        haptic('light');
+      }
 
-    function openPayment(type){
-      pendingType = type;
-      const wrap = document.getElementById('paymentButtons');
-      wrap.innerHTML = '';
-      const methods = type === 'code' ? ['MasterCard'] : ['آسيا','MasterCard'];
+      $$('[data-tab]').forEach(btn => btn.addEventListener('click', () => showTab(btn.dataset.tab)));
+      $$('[data-go]').forEach(card => card.addEventListener('click', () => showTab(card.dataset.go)));
 
-      methods.forEach(m => {
-        const b = document.createElement('button');
-        b.className = 'pay';
-        b.textContent = m;
-        b.addEventListener('click', () => finishDemo(m));
-        wrap.appendChild(b);
+      const user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+      if (user && user.first_name) {
+        $('#welcome').textContent = `هلا ${user.first_name} 😎 نورت BLACK STORE، اختار خدمتك والباقي علينا.`;
+      }
+
+      const qty = $('#growthQty');
+      const quantities = [1000, ...Array.from({length:20}, (_,i) => (i+1)*5000)];
+      quantities.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = String(v);
+        opt.textContent = v.toLocaleString('en-US');
+        qty.appendChild(opt);
+      });
+      qty.value = '5000';
+
+      const growthPrice = (v) => (Number(v) / 5000) * 10;
+      function updatePrice(){
+        const p = growthPrice(qty.value);
+        $('#growthPrice').textContent = '$' + (Number.isInteger(p) ? p.toFixed(0) : p.toFixed(2));
+      }
+      qty.addEventListener('change', () => { updatePrice(); haptic('light'); });
+      updatePrice();
+
+      const sheet = $('#paymentSheet');
+      const methodsWrap = $('#payMethods');
+
+      function openPayment(type){
+        state.pending = type;
+        methodsWrap.innerHTML = '';
+
+        const methods = type === 'code' ? ['MasterCard'] : ['آسيا', 'MasterCard'];
+        const summary = type === 'code'
+          ? 'كود متجر بلس — $15'
+          : `${Number(qty.value).toLocaleString('en-US')} — $${growthPrice(qty.value)}`;
+
+        $('#paymentSummary').textContent = summary;
+
+        methods.forEach(method => {
+          const btn = document.createElement('button');
+          btn.className = 'pay';
+          btn.type = 'button';
+          btn.textContent = method === 'MasterCard' ? '💳 MasterCard' : '🟣 آسيا';
+          btn.addEventListener('click', () => createOrder(method));
+          methodsWrap.appendChild(btn);
+        });
+
+        sheet.classList.add('show');
+        haptic('medium');
+      }
+
+      function closePayment(){
+        sheet.classList.remove('show');
+      }
+
+      $('#closeSheet').addEventListener('click', closePayment);
+      sheet.addEventListener('click', e => {
+        if (e.target === sheet) closePayment();
       });
 
-      showTab('paymentBox');
-    }
+      $('#growthBuy').addEventListener('click', () => {
+        const target = $('#growthTarget').value.trim();
+        if (!target) {
+          showToast('اكتب الرابط أو اليوزر أول شي 😅');
+          haptic('medium');
+          return;
+        }
+        openPayment('growth');
+      });
 
-    document.getElementById('growthBuy').addEventListener('click', () => {
-      const target = document.getElementById('growthTarget').value.trim();
-      if (!target){
-        notice.textContent = 'اكتب الرابط أو اليوزر أول شي 😅';
-        notice.style.display = 'block';
-        return;
+      $('#codeBuy').addEventListener('click', () => openPayment('code'));
+
+      function createOrder(method){
+        let order;
+        if (state.pending === 'growth') {
+          const q = Number(qty.value);
+          order = {
+            type: 'growth',
+            title: `رشق ${q.toLocaleString('en-US')}`,
+            target: $('#growthTarget').value.trim(),
+            method,
+            price: growthPrice(q),
+            status: 'بانتظار التأكيد'
+          };
+        } else {
+          order = {
+            type: 'code',
+            title: 'كود متجر بلس',
+            target: '',
+            method,
+            price: 15,
+            status: 'بانتظار التأكيد'
+          };
+        }
+
+        state.orders.unshift(order);
+        renderOrders();
+        closePayment();
+        showTab('orders');
+        showToast('تم إنشاء الطلب داخل الـMini App ✅');
+
+        // يرسل بيانات الطلب إلى البوت إذا تم فتح التطبيق من زر WebApp يدعم sendData.
+        if (tg) {
+          try {
+            tg.sendData(JSON.stringify({
+              action: 'create_order',
+              order
+            }));
+          } catch (_) {}
+        }
       }
-      openPayment('growth');
-    });
 
-    document.getElementById('codeBuy').addEventListener('click', () => openPayment('code'));
-    document.getElementById('cancelPay').addEventListener('click', () => showTab(pendingType === 'code' ? 'codes' : 'growth'));
+      function renderOrders(){
+        const wrap = $('#ordersList');
+        $('#orderCount').textContent = `${state.orders.length} طلب`;
 
-    function finishDemo(method){
-      const list = document.getElementById('ordersList');
+        if (!state.orders.length) {
+          wrap.innerHTML = '<div class="glass empty"><div class="emoji">📭</div>بعد ماكو طلبات بهالجلسة.</div>';
+          return;
+        }
 
-      if (pendingType === 'growth'){
-        const q = Number(qty.value);
-        const p = getPrice(q);
-        const target = document.getElementById('growthTarget').value.trim();
-        list.innerHTML =
-          '🚀 رشق ' + q.toLocaleString('en-US') +
-          '<br>🎯 ' + target +
-          '<br>💳 ' + method +
-          '<br>💵 $' + p.toFixed(p % 1 ? 2 : 0) +
-          '<br>⏳ بانتظار التأكيد';
-      } else {
-        list.innerHTML =
-          '🎟 طلب كود بلس' +
-          '<br>💳 ' + method +
-          '<br>⏳ بانتظار التأكيد';
+        wrap.innerHTML = '';
+        state.orders.forEach((o, i) => {
+          const el = document.createElement('div');
+          el.className = 'glass order';
+          el.innerHTML = `
+            <div class="order-head">
+              <div style="font-weight:900">${o.title}</div>
+              <span class="status waiting">⏳ ${o.status}</span>
+            </div>
+            ${o.target ? `<div class="muted" style="margin-top:6px">🎯 ${escapeHtml(o.target)}</div>` : ''}
+            <div class="muted" style="margin-top:6px">💳 ${o.method} &nbsp; • &nbsp; 💵 $${formatPrice(o.price)}</div>
+            <div class="muted" style="margin-top:6px">رقم مؤقت: #${String(state.orders.length - i).padStart(3,'0')}</div>
+          `;
+          wrap.appendChild(el);
+        });
       }
 
-      notice.textContent = 'هذا نموذج الواجهة. بالخطوة الجاية نربطه ويا bot.py حتى الطلب ينحفظ فعلياً.';
-      notice.style.display = 'block';
-      showTab('orders');
-      notice.style.display = 'block';
-    }
+      function formatPrice(v){
+        return Number.isInteger(v) ? v.toFixed(0) : v.toFixed(2);
+      }
+
+      function escapeHtml(value){
+        return String(value)
+          .replaceAll('&','&amp;')
+          .replaceAll('<','&lt;')
+          .replaceAll('>','&gt;')
+          .replaceAll('"','&quot;')
+          .replaceAll("'","&#039;");
+      }
+
+      $('#codeNotice').style.display = 'block';
+    })();
   </script>
 </body>
 </html>
