@@ -380,9 +380,207 @@
       }
     }
 
+
+    /* ====== RICH ANIMATED BACKGROUND ====== */
+    body{
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255,124,210,.20), transparent 28%),
+        radial-gradient(circle at 82% 12%, rgba(114,168,255,.22), transparent 30%),
+        radial-gradient(circle at 72% 72%, rgba(192,124,255,.24), transparent 34%),
+        radial-gradient(circle at 18% 82%, rgba(70,220,210,.13), transparent 30%),
+        linear-gradient(135deg,#24113d 0%,#151b45 36%,#35134e 68%,#15112b 100%);
+      background-size:160% 160%;
+      animation:bgShift 18s ease-in-out infinite;
+      position:relative;
+    }
+    body::before{
+      content:"";position:fixed;inset:-20%;z-index:0;pointer-events:none;
+      background:
+        radial-gradient(circle,rgba(255,255,255,.10) 0 1px,transparent 1.8px) 0 0/46px 46px,
+        radial-gradient(circle,rgba(255,255,255,.07) 0 1px,transparent 1.8px) 23px 17px/58px 58px;
+      opacity:.45;
+      animation:starsDrift 30s linear infinite;
+    }
+    body::after{
+      content:"";position:fixed;inset:-25%;z-index:0;pointer-events:none;filter:blur(80px);
+      background:
+        radial-gradient(circle at 20% 35%,rgba(255,89,194,.34),transparent 24%),
+        radial-gradient(circle at 78% 25%,rgba(81,146,255,.30),transparent 26%),
+        radial-gradient(circle at 55% 78%,rgba(151,82,255,.34),transparent 26%);
+      animation:auroraMove 16s ease-in-out infinite alternate;
+      opacity:.85;
+    }
+    @keyframes auroraMove{
+      0%{transform:translate3d(-3%,-2%,0) scale(1) rotate(0deg)}
+      50%{transform:translate3d(4%,3%,0) scale(1.08) rotate(3deg)}
+      100%{transform:translate3d(-1%,6%,0) scale(1.03) rotate(-2deg)}
+    }
+    @keyframes starsDrift{
+      from{transform:translate3d(0,0,0)}
+      to{transform:translate3d(70px,55px,0)}
+    }
+    .ambient{opacity:.46;filter:blur(74px)}
+    .a1{width:240px;height:240px;top:-65px;left:-55px;background:#ff66c4}
+    .a2{width:230px;height:230px;bottom:18%;right:-80px;background:#648dff}
+    .a3{width:180px;height:180px;top:48%;left:18%;background:#ae63ff;opacity:.30}
+    .app{position:relative;z-index:2}
+    .glass{background:linear-gradient(180deg,rgba(255,255,255,.095),rgba(255,255,255,.052));}
 </style>
+
+<style id="blackstore-luxury-motion-v2">
+/* BLACK STORE — clearly visible luxury animated background */
+html, body {
+  min-height: 100%;
+  background: #16072c !important;
+}
+body {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: -35%;
+  z-index: -20;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 24%, rgba(178,76,255,.95) 0 8%, transparent 28%),
+    radial-gradient(circle at 82% 20%, rgba(52,118,255,.88) 0 7%, transparent 27%),
+    radial-gradient(circle at 72% 78%, rgba(255,65,190,.72) 0 7%, transparent 28%),
+    radial-gradient(circle at 22% 82%, rgba(73,220,255,.58) 0 6%, transparent 25%),
+    linear-gradient(125deg, #210b3d 0%, #37105d 36%, #171f59 67%, #35105b 100%);
+  background-size: 120% 120%, 130% 130%, 125% 125%, 135% 135%, 220% 220%;
+  filter: saturate(1.28);
+  animation: bsAurora 8s ease-in-out infinite alternate, bsHue 14s linear infinite;
+  transform: translate3d(0,0,0);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -19;
+  pointer-events: none;
+  opacity: .72;
+  background:
+    conic-gradient(from 0deg at 50% 50%,
+      transparent 0 13%,
+      rgba(203,117,255,.28) 18%,
+      transparent 26% 48%,
+      rgba(79,184,255,.25) 55%,
+      transparent 63% 82%,
+      rgba(255,86,210,.22) 88%,
+      transparent 96%);
+  filter: blur(32px);
+  animation: bsSpin 16s linear infinite;
+}
+@keyframes bsAurora {
+  0%   { transform: translate3d(-5%,-3%,0) scale(1.02) rotate(-2deg); background-position: 0% 20%,100% 10%,90% 100%,10% 90%,0% 50%; }
+  50%  { transform: translate3d(4%,3%,0) scale(1.10) rotate(2deg); background-position: 35% 60%,65% 45%,55% 55%,50% 35%,100% 50%; }
+  100% { transform: translate3d(-2%,5%,0) scale(1.05) rotate(-1deg); background-position: 90% 80%,10% 80%,15% 10%,85% 15%,0% 50%; }
+}
+@keyframes bsSpin {
+  from { transform: rotate(0deg) scale(1.08); }
+  to   { transform: rotate(360deg) scale(1.08); }
+}
+@keyframes bsHue {
+  0%,100% { filter: saturate(1.28) hue-rotate(0deg); }
+  50%     { filter: saturate(1.45) hue-rotate(18deg); }
+}
+
+/* moving luminous ribbons */
+.bs-motion-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -18;
+  overflow: hidden;
+  pointer-events: none;
+}
+.bs-motion-bg .orb {
+  position: absolute;
+  width: 58vw;
+  height: 58vw;
+  border-radius: 50%;
+  filter: blur(55px);
+  mix-blend-mode: screen;
+  opacity: .48;
+}
+.bs-motion-bg .o1 {
+  left: -28vw; top: 8vh;
+  background: rgba(190,79,255,.85);
+  animation: bsFloat1 7s ease-in-out infinite alternate;
+}
+.bs-motion-bg .o2 {
+  right: -30vw; top: 38vh;
+  background: rgba(38,150,255,.8);
+  animation: bsFloat2 9s ease-in-out infinite alternate;
+}
+.bs-motion-bg .o3 {
+  left: 20vw; bottom: -35vw;
+  background: rgba(255,66,188,.7);
+  animation: bsFloat3 8s ease-in-out infinite alternate;
+}
+.bs-motion-bg .streak {
+  position: absolute;
+  left: -55%;
+  width: 180%;
+  height: 2px;
+  opacity: .55;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.7), rgba(184,95,255,.95), transparent);
+  box-shadow: 0 0 16px rgba(190,105,255,.85);
+  transform: rotate(-16deg);
+  animation: bsSweep 5.5s linear infinite;
+}
+.bs-motion-bg .s1 { top: 28%; animation-delay: 0s; }
+.bs-motion-bg .s2 { top: 62%; animation-delay: -2.6s; opacity:.35; }
+@keyframes bsFloat1 { to { transform: translate(55vw,18vh) scale(1.25); } }
+@keyframes bsFloat2 { to { transform: translate(-50vw,-22vh) scale(.85); } }
+@keyframes bsFloat3 { to { transform: translate(18vw,-42vh) scale(1.18); } }
+@keyframes bsSweep {
+  0% { transform: translateX(-30%) rotate(-16deg); }
+  100% { transform: translateX(45%) rotate(-16deg); }
+}
+
+/* keep cards luxurious and readable while letting motion show */
+.glass, .sheet-card, .modal, .card {
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+}
+</style>
+
+
+<style id="blackstore-catalog-v1">
+.store-catalog-wrap{margin:18px 0 110px}
+.store-catalog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px;border:1px solid rgba(255,255,255,.13);border-radius:24px;background:linear-gradient(135deg,rgba(111,41,181,.28),rgba(33,95,180,.18));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 18px 55px rgba(0,0,0,.20),inset 0 1px rgba(255,255,255,.08)}
+.store-catalog-title{font-size:22px;font-weight:950;margin:0}.store-catalog-sub{font-size:13px;opacity:.72;margin-top:5px;line-height:1.7}
+.catalog-badge{white-space:nowrap;padding:8px 12px;border-radius:999px;background:rgba(174,92,255,.18);border:1px solid rgba(214,164,255,.28);font-weight:800;font-size:12px}
+.catalog-search{width:100%;margin:14px 0 12px;padding:14px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.13);outline:none;color:#fff;background:rgba(17,7,33,.56);font:inherit;box-sizing:border-box}
+.catalog-search::placeholder{color:rgba(255,255,255,.48)}
+.catalog-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}.catalog-chips::-webkit-scrollbar{display:none}
+.catalog-chip{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.055);color:#fff;border-radius:999px;padding:9px 13px;white-space:nowrap;font:inherit;font-size:13px;font-weight:800}
+.catalog-chip.active{background:linear-gradient(135deg,#a64cff,#6948ff);box-shadow:0 8px 28px rgba(146,70,255,.28)}
+.catalog-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.catalog-card{position:relative;overflow:hidden;padding:14px;border-radius:20px;border:1px solid rgba(255,255,255,.11);background:linear-gradient(160deg,rgba(255,255,255,.085),rgba(255,255,255,.035));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);min-height:154px}
+.catalog-card::after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;right:-40px;top:-40px;background:radial-gradient(circle,rgba(182,86,255,.30),transparent 70%);pointer-events:none}
+.catalog-top{display:flex;align-items:center;gap:10px}.catalog-icon{width:46px;height:46px;display:grid;place-items:center;border-radius:15px;font-size:25px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.11)}
+.catalog-name{font-weight:950;font-size:15px;line-height:1.2}.catalog-type{opacity:.54;font-size:11px;margin-top:4px}
+.catalog-features{font-size:12px;line-height:1.7;opacity:.82;margin-top:10px}
+.catalog-empty{margin-top:10px;width:100%;padding:9px;border-radius:13px;border:1px dashed rgba(255,255,255,.18);background:rgba(255,255,255,.035);color:rgba(255,255,255,.58);font-weight:800;font-size:12px}
+.catalog-note{margin-top:12px;padding:12px 14px;border-radius:17px;background:rgba(151,80,255,.10);border:1px solid rgba(198,143,255,.16);font-size:12px;line-height:1.75;opacity:.8}
+@media (max-width:390px){.catalog-grid{grid-template-columns:1fr}.store-catalog-title{font-size:20px}}
+</style>
+
 </head>
 <body>
+
+<div class="bs-motion-bg" aria-hidden="true">
+  <i class="orb o1"></i>
+  <i class="orb o2"></i>
+  <i class="orb o3"></i>
+  <i class="streak s1"></i>
+  <i class="streak s2"></i>
+</div>
+
   <div class="ambient a1"></div>
   <div class="ambient a2"></div>
   <div class="ambient a3"></div>
@@ -533,7 +731,30 @@
         </div>
       </div>
     </section>
-  </main>
+  
+<section id="blackStoreCatalog" class="store-catalog-wrap">
+  <div class="store-catalog-head">
+    <div>
+      <h2 class="store-catalog-title">🛍️ متجر بلاك ستور</h2>
+      <div class="store-catalog-sub">تطبيقات بلس • ألعاب • ذكاء اصطناعي • تصميم ومونتاج • أدوات وخدمات</div>
+    </div>
+    <div class="catalog-badge">PLUS STORE</div>
+  </div>
+  <input id="catalogSearch" class="catalog-search" type="search" placeholder="🔎 ابحث عن تطبيق، لعبة أو أداة..." autocomplete="off">
+  <div class="catalog-chips" id="catalogChips">
+    <button class="catalog-chip active" data-cat="all">الكل</button>
+    <button class="catalog-chip" data-cat="social">تواصل</button>
+    <button class="catalog-chip" data-cat="video">فيديو وموسيقى</button>
+    <button class="catalog-chip" data-cat="ai">ذكاء اصطناعي</button>
+    <button class="catalog-chip" data-cat="design">تصميم ومونتاج</button>
+    <button class="catalog-chip" data-cat="games">ألعاب</button>
+    <button class="catalog-chip" data-cat="tools">أدوات</button>
+  </div>
+  <div class="catalog-grid" id="catalogGrid"></div>
+  <div class="catalog-note">✨ هذا القسم تعريفي حالياً: الأزرار بدون تنزيل مثل ما طلبت. تگدر بعدين تربط كل تطبيق أو لعبة بملف IPA أو رابط تثبيت أو نظام أكواد من لوحة الإدارة.</div>
+</section>
+
+</main>
 
   <nav class="bottom">
     <button class="active" data-tab="home"><span class="nav-icon">🏠</span>الرئيسية</button>
@@ -605,6 +826,28 @@
     (() => {
       const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
       const BACKEND_URL = "https://blackstore.wispbyte.app";
+
+      // Telegram normally exposes initData through Telegram.WebApp.
+      // On some iOS/Menu Button launches it can arrive in the launch URL first,
+      // so keep a safe fallback that still sends Telegram's SIGNED initData.
+      function getTelegramInitData(){
+        try {
+          if (tg && typeof tg.initData === 'string' && tg.initData.trim()) {
+            return tg.initData.trim();
+          }
+
+          const sources = [window.location.search, window.location.hash];
+          for (const raw of sources) {
+            if (!raw) continue;
+            const q = raw.replace(/^[?#]/, '');
+            const params = new URLSearchParams(q);
+            const wrapped = params.get('tgWebAppData');
+            if (wrapped) return wrapped;
+          }
+        } catch (_) {}
+        return '';
+      }
+
       if (tg) {
         try {
           tg.ready();
@@ -802,7 +1045,7 @@
 
         try {
           const form = new FormData();
-          form.append('initData', tg ? tg.initData : '');
+          form.append('initData', getTelegramInitData());
           form.append('kind', state.serverOrder.kind);
           form.append('order_id', String(state.serverOrder.order_id));
           form.append('proof', file, file.name || 'proof.jpg');
@@ -879,15 +1122,16 @@
           };
         }
 
-        if (!tg || !tg.initData) {
-          throw new Error('invalid_telegram_data');
+        const initData = getTelegramInitData();
+        if (!initData) {
+          throw new Error('telegram_data_missing');
         }
 
         const res = await fetch(BACKEND_URL + '/api/order', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
-            initData: tg.initData,
+            initData,
             order
           })
         });
@@ -975,5 +1219,59 @@
       $('#codeNotice').style.display = 'block';
     })();
   </script>
+
+<script id="blackstore-catalog-js-v1">
+(function(){
+  const apps = [
+    {n:'Instagram Plus',i:'📸',c:'social',t:'تواصل اجتماعي',f:'تنزيل الصور والفيديو • حفظ الستوري • خيارات خصوصية إضافية • مزايا Plus مفتوحة'},
+    {n:'WhatsApp Plus',i:'💬',c:'social',t:'مراسلة',f:'خيارات خصوصية متقدمة • تخصيص الواجهة • مزايا إضافية للمحادثات والوسائط'},
+    {n:'Snapchat Plus',i:'👻',c:'social',t:'تواصل اجتماعي',f:'مزايا Plus إضافية • خيارات تخصيص • أدوات أكثر للسنابات والملف الشخصي'},
+    {n:'Telegram Plus',i:'✈️',c:'social',t:'مراسلة',f:'تخصيص أوسع • أدوات إدارة إضافية • خيارات متقدمة للمحادثات والملفات'},
+    {n:'TikTok Plus',i:'🎵',c:'social',t:'فيديو قصير',f:'حفظ المقاطع • خيارات تشغيل إضافية • أدوات أكثر للتصفح والمشاركة'},
+    {n:'X Plus',i:'𝕏',c:'social',t:'تواصل اجتماعي',f:'خيارات إضافية للواجهة والوسائط • تحسينات تجربة الاستخدام'},
+    {n:'YouTube Plus',i:'▶️',c:'video',t:'فيديو',f:'تشغيل بالخلفية • وضع صورة داخل صورة • أدوات مشاهدة إضافية'},
+    {n:'Spotify Plus',i:'🎧',c:'video',t:'موسيقى',f:'خيارات تشغيل موسعة • تحكم أفضل بالقوائم والتشغيل'},
+    {n:'SoundCloud Plus',i:'🎶',c:'video',t:'موسيقى',f:'تجربة استماع محسنة • أدوات تشغيل وقوائم إضافية'},
+    {n:'Twitch Plus',i:'🟣',c:'video',t:'بث مباشر',f:'خيارات مشاهدة إضافية • تحسينات للواجهة والبث'},
+    {n:'ChatGPT Tools',i:'🤖',c:'ai',t:'ذكاء اصطناعي',f:'كتابة وتلخيص • أفكار ومحتوى • مساعدة دراسية وبرمجية'},
+    {n:'Gemini Tools',i:'✨',c:'ai',t:'ذكاء اصطناعي',f:'محادثة ذكية • تلخيص • إنشاء أفكار ونصوص'},
+    {n:'Claude Tools',i:'🧠',c:'ai',t:'ذكاء اصطناعي',f:'كتابة طويلة • تحليل نصوص • تنظيم أفكار ومحتوى'},
+    {n:'Perplexity Tools',i:'🔍',c:'ai',t:'بحث ذكي',f:'بحث ومساعدة معرفية • تلخيص النتائج • تنظيم المعلومات'},
+    {n:'AI Photo',i:'🪄',c:'ai',t:'ذكاء اصطناعي',f:'تحسين الصور • إزالة عناصر • إنشاء وتعديل صور بالذكاء الاصطناعي'},
+    {n:'CapCut Plus',i:'✂️',c:'design',t:'مونتاج',f:'أدوات مونتاج متقدمة • مؤثرات وقوالب • تحرير فيديو وصوت'},
+    {n:'Canva Plus',i:'🎨',c:'design',t:'تصميم',f:'قوالب وتصاميم • إزالة خلفية • أدوات تحرير ومحتوى متقدمة'},
+    {n:'PicsArt Plus',i:'🖼️',c:'design',t:'تصميم صور',f:'فلاتر وتأثيرات • قص وتعديل • أدوات تصميم إضافية'},
+    {n:'Lightroom Plus',i:'📷',c:'design',t:'تعديل صور',f:'تحكم بالألوان • Presets • أدوات احترافية لتعديل الصور'},
+    {n:'InShot Plus',i:'🎞️',c:'design',t:'مونتاج',f:'مونتاج سريع • نصوص وانتقالات • أدوات فيديو وصور إضافية'},
+    {n:'VN Plus',i:'🎥',c:'design',t:'مونتاج',f:'Timeline متقدم • انتقالات • تحكم بالصوت والفيديو'},
+    {n:'Remini Plus',i:'💎',c:'design',t:'تحسين صور',f:'رفع وضوح الصور • تحسين الوجوه • معالجة الصور القديمة'},
+    {n:'PUBG Mobile',i:'🔫',c:'games',t:'لعبة',f:'قسم مخصص للعبة • معلومات النسخة • إضافات أو خدمات حسب المتوفر بالمتجر'},
+    {n:'Call of Duty Mobile',i:'🎯',c:'games',t:'لعبة',f:'قسم اللعبة وخدماتها • تفاصيل الإصدار • محتوى إضافي حسب المتوفر'},
+    {n:'Minecraft',i:'⛏️',c:'games',t:'لعبة',f:'معلومات اللعبة • نسخ وإضافات حسب المتوفر لاحقاً'},
+    {n:'GTA',i:'🚗',c:'games',t:'لعبة',f:'قسم لألعاب GTA المتوفرة على الجهاز • تفاصيل كل إصدار لاحقاً'},
+    {n:'Among Us',i:'👨‍🚀',c:'games',t:'لعبة',f:'معلومات النسخة • مزايا وخيارات إضافية حسب النسخة المتاحة'},
+    {n:'Subway Surfers',i:'🛹',c:'games',t:'لعبة',f:'قسم اللعبة • وصف النسخة • خدمات إضافية حسب المتوفر'},
+    {n:'8 Ball Pool',i:'🎱',c:'games',t:'لعبة',f:'تفاصيل اللعبة • إضافات وخدمات حسب النسخة المتوفرة'},
+    {n:'Roblox',i:'🧱',c:'games',t:'لعبة',f:'قسم اللعبة • معلومات النسخة والخدمات المتوفرة لاحقاً'},
+    {n:'Documents Plus',i:'📁',c:'tools',t:'أدوات',f:'إدارة ملفات • تنزيل وتنظيم • أدوات مشاركة وحفظ'},
+    {n:'AdBlock Tools',i:'🛡️',c:'tools',t:'أدوات',f:'أدوات مساعدة لتقليل الإعلانات وتحسين التصفح حسب النظام'},
+    {n:'Scanner Plus',i:'📄',c:'tools',t:'أدوات',f:'مسح مستندات • تحويل إلى PDF • تنظيم ومشاركة الملفات'},
+    {n:'Translator Plus',i:'🌐',c:'tools',t:'أدوات',f:'ترجمة نصوص • نسخ سريع • أدوات مساعدة للغات'},
+    {n:'Keyboard Plus',i:'⌨️',c:'tools',t:'أدوات',f:'تخصيص الكتابة • ثيمات • أدوات اختصارات ونصوص جاهزة'},
+    {n:'File Manager',i:'🗂️',c:'tools',t:'أدوات',f:'تنظيم الملفات • تصنيف ومشاركة • وصول أسرع للمحتوى'}
+  ];
+  const grid=document.getElementById('catalogGrid'),search=document.getElementById('catalogSearch'),chips=document.getElementById('catalogChips');
+  if(!grid||!search||!chips)return;
+  let active='all';
+  function render(){
+    const q=search.value.trim().toLowerCase();
+    const filtered=apps.filter(a=>(active==='all'||a.c===active)&&(a.n.toLowerCase().includes(q)||a.t.toLowerCase().includes(q)||a.f.toLowerCase().includes(q)));
+    grid.innerHTML=filtered.map(a=>`<article class="catalog-card"><div class="catalog-top"><div class="catalog-icon">${a.i}</div><div><div class="catalog-name">${a.n}</div><div class="catalog-type">${a.t}</div></div></div><div class="catalog-features">${a.f}</div><button class="catalog-empty" type="button" disabled>قريباً — بدون تنزيل حالياً</button></article>`).join('')||'<div class="catalog-note" style="grid-column:1/-1">ماكو نتيجة مطابقة للبحث.</div>';
+  }
+  chips.addEventListener('click',e=>{const btn=e.target.closest('[data-cat]');if(!btn)return;active=btn.dataset.cat;chips.querySelectorAll('.catalog-chip').forEach(x=>x.classList.toggle('active',x===btn));render();});
+  search.addEventListener('input',render);render();
+})();
+</script>
+
 </body>
 </html>
