@@ -806,6 +806,9 @@ body::after {
           ✅ بعد ما تحول اضغط «حولت». بعدها اختار <b>صورة إثبات التحويل</b> واضغط إرسال. الصورة تروح مباشرة للأدمن ويا رقم طلبك.
         </div>
 
+        <div id="miniAppDiag" class="muted" style="margin-top:10px;text-align:center;font-size:11px;opacity:.72">
+          فحص الاتصال يشتغل تلقائياً قبل تثبيت الطلب.
+        </div>
         <button class="btn" id="sendProof">✅ حولت — متابعة لإثبات الدفع</button>
 
         <div id="proofStep" style="display:none;margin-top:12px">
@@ -825,27 +828,99 @@ body::after {
   <script>
     (() => {
       const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-      const BACKEND_URL = "https://blackstore.wispbyte.app";
+      const BACKEND_URL = (() => {
+        try {
+          const u = new URL(window.location.href);
+          const custom = u.searchParams.get('api');
+          if (custom && /^https:\/\//i.test(custom)) return custom.replace(/\/$/, '');
+        } catch (_) {}
+        return "https://blackstore.wispbyte.app";
+      })();
 
       // Telegram normally exposes initData through Telegram.WebApp.
       // On some iOS/Menu Button launches it can arrive in the launch URL first,
       // so keep a safe fallback that still sends Telegram's SIGNED initData.
       function getTelegramInitData(){
         try {
+          // 1) Official Telegram WebApp SDK value.
           if (tg && typeof tg.initData === 'string' && tg.initData.trim()) {
             return tg.initData.trim();
           }
 
-          const sources = [window.location.search, window.location.hash];
-          for (const raw of sources) {
+          // 2) Telegram sometimes places tgWebAppData in query/hash.
+          const candidates = [
+            window.location.search || '',
+            window.location.hash || '',
+            decodeURIComponent(window.location.search || ''),
+            decodeURIComponent(window.location.hash || '')
+          ];
+
+          for (const raw0 of candidates) {
+            const raw = String(raw0 || '').replace(/^[?#]/, '');
             if (!raw) continue;
-            const q = raw.replace(/^[?#]/, '');
-            const params = new URLSearchParams(q);
-            const wrapped = params.get('tgWebAppData');
-            if (wrapped) return wrapped;
+
+            const params = new URLSearchParams(raw);
+            const direct = params.get('tgWebAppData');
+            if (direct) {
+              try { return decodeURIComponent(direct); } catch (_) { return direct; }
+            }
+
+            // hash can itself contain a nested query string
+            const idx = raw.indexOf('tgWebAppData=');
+            if (idx >= 0) {
+              const tail = raw.slice(idx + 'tgWebAppData='.length);
+              const value = tail.split('&tgWebAppVersion=')[0]
+                                .split('&tgWebAppPlatform=')[0]
+                                .split('&tgWebAppThemeParams=')[0];
+              if (value) {
+                try { return decodeURIComponent(value); } catch (_) { return value; }
+              }
+            }
           }
-        } catch (_) {}
+        } catch (e) {
+          console.error('Telegram initData read error:', e);
+        }
         return '';
+      }
+
+      async function apiFetch(path, options = {}, timeoutMs = 12000){
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+          const url = BACKEND_URL + path;
+          console.log('[BLACK STORE API]', options.method || 'GET', url);
+
+          const res = await fetch(url, {
+            ...options,
+            mode: 'cors',
+            cache: 'no-store',
+            credentials: 'omit',
+            signal: controller.signal
+          });
+
+          console.log('[BLACK STORE API RESULT]', res.status, res.statusText);
+          return res;
+        } catch (err) {
+          console.error('[BLACK STORE API ERROR]', err);
+          if (err && err.name === 'AbortError') {
+            throw new Error('api_timeout');
+          }
+          throw new Error('api_network_error');
+        } finally {
+          clearTimeout(timer);
+        }
+      }
+
+      async function checkApiConnection(){
+        try {
+          const res = await apiFetch('/health', {method:'GET'}, 6000);
+          if (!res.ok) return false;
+          const data = await res.json().catch(() => ({}));
+          return !!data.ok;
+        } catch (_) {
+          return false;
+        }
       }
 
       if (tg) {
@@ -997,9 +1072,21 @@ body::after {
 
         const btn = $('#sendProof');
         btn.disabled = true;
-        btn.textContent = '⏳ جاري تثبيت الطلب...';
+        btn.textContent = '⏳ جاري فحص الاتصال...';
 
         try {
+          const initData = getTelegramInitData();
+          if (!initData) {
+            throw new Error('telegram_data_missing');
+          }
+
+          const apiOk = await checkApiConnection();
+          if (!apiOk) {
+            throw new Error('api_offline');
+          }
+
+          btn.textContent = '⏳ جاري تثبيت الطلب...';
+
           const result = await createOrder(selectedPaymentMethod);
           state.serverOrder = result;
 
@@ -1015,12 +1102,19 @@ body::after {
           btn.textContent = '✅ حولت — متابعة لإثبات الدفع';
 
           const msg = String(err && err.message || '');
-          if (msg.includes('no_code_stock')) {
+
+          if (msg.includes('telegram_data_missing')) {
+            showToast('❌ بيانات تيليگرام ما وصلت للميني آب. افتحه من زر المتجر داخل البوت.');
+          } else if (msg.includes('api_offline') || msg.includes('api_network_error')) {
+            showToast('❌ الميني آب ما كدر يوصل للـ API. تأكد أن رابط السيرفر شغال.');
+          } else if (msg.includes('api_timeout')) {
+            showToast('❌ السيرفر تأخر بالرد. حاول بعد ثواني.');
+          } else if (msg.includes('no_code_stock')) {
             showToast('❌ حالياً ماكو أكواد متوفرة بالمخزون.');
           } else if (msg.includes('invalid_telegram_data')) {
-            showToast('افتح المتجر من داخل تيليگرام وحاول مرة ثانية.');
+            showToast('❌ بيانات تيليگرام مرفوضة من السيرفر. أعد فتح المتجر من البوت.');
           } else {
-            showToast('تعذر تثبيت الطلب. حاول مرة ثانية.');
+            showToast('❌ خطأ: ' + (msg || 'تعذر تثبيت الطلب'));
           }
         }
       });
@@ -1050,7 +1144,7 @@ body::after {
           form.append('order_id', String(state.serverOrder.order_id));
           form.append('proof', file, file.name || 'proof.jpg');
 
-          const res = await fetch(BACKEND_URL + '/api/proof', {
+          const res = await apiFetch('/api/proof', {
             method: 'POST',
             body: form
           });
@@ -1127,7 +1221,7 @@ body::after {
           throw new Error('telegram_data_missing');
         }
 
-        const res = await fetch(BACKEND_URL + '/api/order', {
+        const res = await apiFetch('/api/order', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
