@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#14091f" />
+  <title>BLACK STORE</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{
+      --bg:#09060e;
+      --bg2:#160a24;
+      --card:rgba(255,255,255,.075);
+      --card2:rgba(255,255,255,.11);
+      --line:rgba(255,255,255,.10);
+      --text:#ffffff;
+      --muted:#cfc5da;
+      --p1:#b06cff;
+      --p2:#7c3aed;
+      --p3:#4c1d95;
+      --success:#35d07f;
+      --danger:#ff5f79;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;
+      background:
+        radial-gradient(circle at 85% 5%, rgba(176,108,255,.25), transparent 30%),
+        radial-gradient(circle at 10% 85%, rgba(124,58,237,.18), transparent 28%),
+        linear-gradient(180deg,var(--bg2),var(--bg));
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    .app{max-width:760px;margin:0 auto;padding:18px 16px 110px;position:relative}
+    .orb{position:fixed;border-radius:999px;filter:blur(55px);opacity:.32;pointer-events:none;z-index:0}
+    .orb.one{width:170px;height:170px;background:#8b5cf6;top:-45px;left:-45px}
+    .orb.two{width:140px;height:140px;background:#c084fc;bottom:70px;right:-45px}
+    .hero,.section,.nav{position:relative;z-index:1}
+    .hero{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:28px;
+      padding:20px;
+      background:linear-gradient(135deg,rgba(108,34,180,.96),rgba(57,21,102,.96));
+      box-shadow:0 18px 50px rgba(69,18,120,.28);
+      overflow:hidden;
+    }
+    .hero:after{
+      content:"";
+      position:absolute;
+      width:210px;height:210px;border-radius:50%;
+      background:rgba(255,255,255,.07);
+      left:-70px;bottom:-120px;
+    }
+    .brand{display:flex;align-items:center;gap:14px;position:relative;z-index:2}
+    .logo{
+      width:82px;height:82px;border-radius:24px;object-fit:cover;
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:0 0 28px rgba(196,139,255,.22);
+    }
+    .title{font-size:24px;font-weight:800;margin:0 0 4px}
+    .subtitle{margin:0;color:#eee3fa;font-size:14px}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;margin-top:12px;
+      background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.12);
+      padding:7px 10px;border-radius:999px;font-size:12px;color:#f2eaff
+    }
+    .nav{
+      margin-top:14px;
+      display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+      padding:8px;border:1px solid var(--line);border-radius:20px;
+      background:rgba(255,255,255,.045);backdrop-filter:blur(16px)
+    }
+    .tab{
+      border:0;border-radius:14px;padding:11px 8px;
+      background:transparent;color:#cdbddd;font-weight:700
+    }
+    .tab.active{
+      color:white;background:linear-gradient(135deg,var(--p1),var(--p2));
+      box-shadow:0 8px 20px rgba(124,58,237,.28)
+    }
+    .section{margin-top:14px;display:none;animation:fade .24s ease}
+    .section.active{display:block}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:22px;
+      padding:16px;backdrop-filter:blur(16px)
+    }
+    .feature{cursor:pointer;transition:.2s ease}
+    .feature:active{transform:scale(.985)}
+    .icon{
+      width:48px;height:48px;border-radius:16px;display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--p1),var(--p3));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.15)
+    }
+    .h{font-size:17px;font-weight:800;margin:12px 0 4px}
+    .muted{color:var(--muted);font-size:13px}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .price{font-size:27px;font-weight:900}
+    label{display:block;margin-top:12px;font-size:13px;color:var(--muted)}
+    select,input{
+      width:100%;margin-top:7px;border-radius:15px;border:1px solid var(--line);
+      background:rgba(255,255,255,.06);color:#fff;padding:13px 14px;font-size:16px;outline:none
+    }
+    select option{color:#111}
+    select:focus,input:focus{border-color:#b58cff;box-shadow:0 0 0 3px rgba(176,108,255,.13)}
+    .btn{
+      width:100%;border:0;border-radius:16px;padding:14px;margin-top:14px;
+      font-size:16px;font-weight:900;color:#fff;
+      background:linear-gradient(135deg,var(--p1),var(--p2));
+      box-shadow:0 12px 30px rgba(124,58,237,.28)
+    }
+    .btn.secondary{
+      background:rgba(255,255,255,.07);border:1px solid var(--line);box-shadow:none
+    }
+    .badge{
+      border-radius:999px;padding:6px 9px;background:rgba(176,108,255,.14);
+      border:1px solid rgba(205,165,255,.16);color:#e9d7ff;font-size:12px
+    }
+    .pay-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .pay{
+      padding:13px;border-radius:15px;border:1px solid var(--line);
+      background:rgba(255,255,255,.07);color:#fff;font-weight:800
+    }
+    .notice{
+      margin-top:12px;padding:12px 14px;border-radius:16px;
+      background:rgba(176,108,255,.10);border:1px solid rgba(176,108,255,.20);
+      color:#eee3fa;font-size:13px
+    }
+    .bottom{
+      position:fixed;z-index:5;left:50%;transform:translateX(-50%);
+      bottom:12px;width:min(720px,calc(100% - 24px));
+      background:rgba(18,8,31,.88);backdrop-filter:blur(18px);
+      border:1px solid var(--line);border-radius:22px;
+      padding:9px;display:grid;grid-template-columns:repeat(4,1fr);gap:7px
+    }
+    .bottom button{
+      border:0;border-radius:14px;padding:10px 4px;background:transparent;color:#c8b7d6;font-size:12px
+    }
+    .bottom button.active{background:linear-gradient(135deg,#9d5cff,#6d28d9);color:#fff;font-weight:800}
+    @media(max-width:460px){.logo{width:68px;height:68px}.title{font-size:20px}.grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <div class="orb one"></div>
+  <div class="orb two"></div>
+
+  <main class="app">
+    <section class="hero">
+      <div class="brand">
+        <img class="logo" src="blackstore-logo.jpeg" alt="BLACK STORE Logo">
+        <div>
+          <h1 class="title">BLACK STORE</h1>
+          <p class="subtitle">متجر الرشق وأكواد بلس</p>
+          <div class="pill">🟣 ثيم بنفسجي • ⚡ طلب سريع • 🎟 أكواد</div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="nav">
+      <button class="tab active" data-tab="home">الرئيسية</button>
+      <button class="tab" data-tab="growth">الرشق</button>
+      <button class="tab" data-tab="codes">الأكواد</button>
+      <button class="tab" data-tab="orders">طلباتي</button>
+    </nav>
+
+    <section id="home" class="section active">
+      <div class="grid">
+        <div class="card feature" data-go="growth">
+          <div class="icon">🚀</div>
+          <div class="h">خدمات الرشق</div>
+          <div class="muted">من 1,000 إلى 100,000</div>
+        </div>
+        <div class="card feature" data-go="codes">
+          <div class="icon">🎟</div>
+          <div class="h">أكواد بلس</div>
+          <div class="muted">تسليم بعد تأكيد الدفع</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="row">
+          <div>
+            <div class="h" style="margin:0">طرق الدفع</div>
+            <div class="muted" style="margin-top:4px">الرشق: آسيا + MasterCard</div>
+          </div>
+          <span class="badge">الأكواد: MasterCard فقط</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="growth" class="section">
+      <div class="card">
+        <div class="row">
+          <div>
+            <div class="h" style="margin:0">🚀 طلب رشق جديد</div>
+            <div class="muted" style="margin-top:4px">كل 5,000 = $10</div>
+          </div>
+          <div class="price" id="growthPrice">$10</div>
+        </div>
+
+        <label>الكمية</label>
+        <select id="growthQty"></select>
+
+        <label>الرابط أو اليوزر</label>
+        <input id="growthTarget" placeholder="@username أو رابط المنشور">
+
+        <button class="btn" id="growthBuy">متابعة للدفع 💳</button>
+      </div>
+    </section>
+
+    <section id="codes" class="section">
+      <div class="card">
+        <div class="row">
+          <div>
+            <div class="h" style="margin:0">🎟 أكواد متجر بلس</div>
+            <div class="muted" style="margin-top:4px">السعر والمخزون راح يجي من البوت</div>
+          </div>
+          <span class="badge">⚡ تسليم تلقائي</span>
+        </div>
+
+        <div class="card" style="margin-top:12px;background:rgba(255,255,255,.045)">
+          <div class="row">
+            <div>
+              <div class="h" style="margin:0">كود متجر بلس</div>
+              <div class="muted" style="margin-top:4px">بعد التأكيد يوصلك ويا شرح التفعيل</div>
+            </div>
+            <div class="price" style="font-size:22px">$15</div>
+          </div>
+        </div>
+
+        <button class="btn" id="codeBuy">شراء الكود 😎</button>
+      </div>
+    </section>
+
+    <section id="orders" class="section">
+      <div class="card">
+        <div class="h" style="margin:0">📦 طلباتك</div>
+        <div id="ordersList" class="muted" style="margin-top:10px">ماكو طلبات بالنموذج هسه.</div>
+      </div>
+    </section>
+
+    <section id="paymentBox" class="section">
+      <div class="card">
+        <div class="row">
+          <div class="h" style="margin:0">💳 اختار طريقة الدفع</div>
+          <span class="badge">سريع</span>
+        </div>
+        <div id="paymentButtons" class="pay-row"></div>
+        <button class="btn secondary" id="cancelPay">رجوع</button>
+      </div>
+    </section>
+
+    <div id="notice" class="notice" style="display:none"></div>
+  </main>
+
+  <div class="bottom">
+    <button class="active" data-tab="home">🏠<br>الرئيسية</button>
+    <button data-tab="growth">🚀<br>الرشق</button>
+    <button data-tab="codes">🎟<br>الأكواد</button>
+    <button data-tab="orders">📦<br>طلباتي</button>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      try { tg.setHeaderColor('#14091f'); tg.setBackgroundColor('#09060e'); } catch(e){}
+    }
+
+    const sections = [...document.querySelectorAll('.section')];
+    const tabs = [...document.querySelectorAll('[data-tab]')];
+    const notice = document.getElementById('notice');
+    const paymentBox = document.getElementById('paymentBox');
+    let pendingType = null;
+
+    function showTab(id){
+      sections.forEach(s => s.classList.toggle('active', s.id === id));
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === id));
+      notice.style.display = 'none';
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
+    document.querySelectorAll('[data-go]').forEach(el =>
+      el.addEventListener('click', () => showTab(el.dataset.go))
+    );
+
+    const qty = document.getElementById('growthQty');
+    const values = [1000, ...Array.from({length:20},(_,i)=>(i+1)*5000)];
+    values.forEach(v => {
+      const o = document.createElement('option');
+      o.value = v;
+      o.textContent = v.toLocaleString('en-US');
+      qty.appendChild(o);
+    });
+    qty.value = '5000';
+
+    const getPrice = v => (Number(v) / 5000) * 10;
+    function updatePrice(){
+      const p = getPrice(qty.value);
+      document.getElementById('growthPrice').textContent = '$' + p.toFixed(p % 1 ? 2 : 0);
+    }
+    qty.addEventListener('change', updatePrice);
+    updatePrice();
+
+    function openPayment(type){
+      pendingType = type;
+      const wrap = document.getElementById('paymentButtons');
+      wrap.innerHTML = '';
+      const methods = type === 'code' ? ['MasterCard'] : ['آسيا','MasterCard'];
+
+      methods.forEach(m => {
+        const b = document.createElement('button');
+        b.className = 'pay';
+        b.textContent = m;
+        b.addEventListener('click', () => finishDemo(m));
+        wrap.appendChild(b);
+      });
+
+      showTab('paymentBox');
+    }
+
+    document.getElementById('growthBuy').addEventListener('click', () => {
+      const target = document.getElementById('growthTarget').value.trim();
+      if (!target){
+        notice.textContent = 'اكتب الرابط أو اليوزر أول شي 😅';
+        notice.style.display = 'block';
+        return;
+      }
+      openPayment('growth');
+    });
+
+    document.getElementById('codeBuy').addEventListener('click', () => openPayment('code'));
+    document.getElementById('cancelPay').addEventListener('click', () => showTab(pendingType === 'code' ? 'codes' : 'growth'));
+
+    function finishDemo(method){
+      const list = document.getElementById('ordersList');
+
+      if (pendingType === 'growth'){
+        const q = Number(qty.value);
+        const p = getPrice(q);
+        const target = document.getElementById('growthTarget').value.trim();
+        list.innerHTML =
+          '🚀 رشق ' + q.toLocaleString('en-US') +
+          '<br>🎯 ' + target +
+          '<br>💳 ' + method +
+          '<br>💵 $' + p.toFixed(p % 1 ? 2 : 0) +
+          '<br>⏳ بانتظار التأكيد';
+      } else {
+        list.innerHTML =
+          '🎟 طلب كود بلس' +
+          '<br>💳 ' + method +
+          '<br>⏳ بانتظار التأكيد';
+      }
+
+      notice.textContent = 'هذا نموذج الواجهة. بالخطوة الجاية نربطه ويا bot.py حتى الطلب ينحفظ فعلياً.';
+      notice.style.display = 'block';
+      showTab('orders');
+      notice.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
